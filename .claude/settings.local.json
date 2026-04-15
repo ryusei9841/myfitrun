@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(psql --version)",
+      "Bash(magick --version)",
+      "Bash(inkscape --version)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(node -e \"const sharp=require\\('sharp'\\);sharp\\('assets/icon.svg',{density:400}\\).resize\\(512,512\\).flatten\\({background:'#FC4C02'}\\).jpeg\\({quality:92}\\).toFile\\('assets/icon.jpg'\\).then\\(i=>console.log\\('ok',i\\)\\).catch\\(e=>{console.error\\(e\\);process.exit\\(1\\)}\\)\")",
+      "Bash(mv package.json _pkg.bak)",
+      "Bash(mv package-lock.json _lock.bak)",
+      "Bash(mv node_modules _nm.bak)",
+      "Bash(mv assets:*)",
+      "Bash(npx --yes create-next-app@latest . --typescript --tailwind --app --src-dir --import-alias \"@/*\" --eslint --no-turbopack --use-npm --yes)",
+      "Read(//c/ClaudeWork/**)",
+      "Bash(mkdir -p _myfitrun_tmp)",
+      "Bash(mv myfitrun/_assets.bak myfitrun/_lock.bak myfitrun/_nm.bak myfitrun/_pkg.bak _myfitrun_tmp/)"
+    ]
+  }
+}
