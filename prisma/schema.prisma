@@ -1,0 +1,93 @@
+// Prisma schema for myfitrun
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String     @id @default(cuid())
+  stravaAthleteId BigInt     @unique
+  username        String?
+  firstName       String?
+  lastName        String?
+  profileImageUrl String?
+  accessToken     String
+  refreshToken    String
+  tokenExpiresAt  DateTime
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  activities      Activity[]
+  goal            Goal?
+  coachReport     CoachReport?
+}
+
+model Goal {
+  id                String   @id @default(cuid())
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String   @unique
+  raceName          String
+  raceDate          DateTime
+  distanceMeters    Float    // 0 < x <= 150000
+  targetTimeSeconds Int
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model CoachReport {
+  id            String   @id @default(cuid())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String   @unique
+  overview      String   // 全体の状況評価
+  paceAdvice    String   // ペース戦略
+  trainingFocus String   // 重点練習
+  motivation    String   // モチベーションコメント
+  model         String
+  generatedAt   DateTime @default(now())
+}
+
+model Activity {
+  id                  String       @id @default(cuid())
+  user                User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId              String
+  stravaActivityId    BigInt       @unique
+  name                String
+  type                String       // "Run", "Walk", etc.
+  startDate           DateTime
+  distanceMeters      Float
+  movingTimeSeconds   Int
+  elapsedTimeSeconds  Int
+  totalElevationGain  Float
+  averageSpeed        Float        // m/s
+  maxSpeed            Float?
+  averageHeartrate    Float?
+  maxHeartrate        Float?
+  averageCadence      Float?
+  calories            Float?
+  rawJson             Json
+  createdAt           DateTime     @default(now())
+
+  evaluation          Evaluation?
+
+  @@index([userId, startDate])
+}
+
+model Evaluation {
+  id            String   @id @default(cuid())
+  activity      Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId    String   @unique
+  summary       String   // 全体評価
+  strengths     String   // 良かった点
+  improvements  String   // 改善点
+  nextGoal      String   // 次の目標
+  trainingPlan  String   // 練習メニュー
+  model         String   // 使用したClaudeモデル名
+  createdAt     DateTime @default(now())
+}
