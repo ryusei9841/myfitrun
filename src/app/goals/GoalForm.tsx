@@ -51,6 +51,9 @@ export default function GoalForm({ initial }: { initial: Initial | null }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
   const distanceMeters = Math.round(Number(distanceKm) * 1000);
   const targetTimeSeconds =
     (Number(hours) || 0) * 3600 + (Number(minutes) || 0) * 60 + (Number(seconds) || 0);
@@ -58,8 +61,9 @@ export default function GoalForm({ initial }: { initial: Initial | null }) {
   const distanceValid =
     isFinite(distanceMeters) && distanceMeters > 0 && distanceMeters <= MAX_METERS;
   const timeValid = targetTimeSeconds > 0;
+  const dateValid = raceDate.length > 0 && raceDate >= todayStr;
   const formValid =
-    raceName.trim().length > 0 && raceDate.length > 0 && distanceValid && timeValid;
+    raceName.trim().length > 0 && dateValid && distanceValid && timeValid;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -123,9 +127,13 @@ export default function GoalForm({ initial }: { initial: Initial | null }) {
         <input
           type="date"
           value={raceDate}
+          min={todayStr}
           onChange={(e) => setRaceDate(e.target.value)}
           className="input"
         />
+        {raceDate.length > 0 && raceDate < todayStr && (
+          <p className="text-xs text-red-500 mt-1">今日以降の日付を入力してください</p>
+        )}
       </Field>
 
       <Field label="距離 (km)" required hint="最大 150 km">
