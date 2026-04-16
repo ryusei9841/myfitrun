@@ -143,7 +143,7 @@ export default function GoalForm({ initial }: { initial: Initial | null }) {
         </div>
         <input
           type="number"
-          step="0.01"
+          step="any"
           min="0.1"
           max="150"
           value={distanceKm}
